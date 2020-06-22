@@ -1,22 +1,28 @@
 {
-  "name": "phaser3-plugin-template",
-  "version": "1.0.0",
-  "description": "Phaser 3 Plugin Template",
+  "name": "phaser3-autotile",
+  "version": "0.1.0",
+  "description": "Phaser 3 Autotile",
   "main": "src/main.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "start": "webpack-dev-server --config webpack/base.js --open"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/photonstorm/phaser3-plugin-template.git"
+    "url": "git://github.com/browndragon/phaser3-autotile.git"
   },
-  "author": "Richard Davey",
+  "author": "Brown Dragon",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/photonstorm/phaser3-plugin-template/issues"
+    "url": "https://github.com/browndragon/phaser3-autotile/issues"
   },
-  "homepage": "https://github.com/photonstorm/phaser3-plugin-template#readme",
+  "homepage": "https://github.com/browndragon/phaser3-autotile#readme",
   "devDependencies": {
-    "webpack": "^3.10.0"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "phaser": "^3.20.1"
   }
 }
