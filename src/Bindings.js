@@ -3,7 +3,7 @@
  *
  * This is useful for geometry and basic image passing/frame dereferencing.
  */
-import Phaser;
+import Phaser from 'phaser';
 
 export const Rectangle = Phaser.Geom.Rectangle;
 export const Point = Phaser.Geom.Point;

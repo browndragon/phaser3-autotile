@@ -9,8 +9,7 @@ import BlobIndexer from "./BlobIndexer.js";
 import Grid from "./Grid.js";
 import Id from "./Id.js";
 import Subtiles from "./Subtiles.js";
-import TileSource from "./TileSource.js";
-import Phaser;
+import Phaser from 'phaser';
 
 
 export var BasePlugin = function (scene)
@@ -136,7 +135,6 @@ Autotile.Id = Id;
 Autotile.BasePlugin = BasePlugin;
 
 
-
 /**
  * Method monkeypatched into tilemap to create a dynamic layer whose content is initially -- and thereafter! -- maintained with a Grid and TileSource.
  * @param {Phaser.Tilemaps.Tilemap} tilemap - The tilemap to monkeypatch into.
@@ -151,17 +149,19 @@ Autotile.BasePlugin = BasePlugin;
  * @param {integer} geometry.tileHeight - The y position to place the layer in the world (default 0).
  */
 function createSubtilerDynamicLayer(tilemap, fromLayerId, toLayerId, tileSource, geometry) {
-    const geometry = tilemap.geometry || {};
-    let {x: x, y: y, width: width, height: height, tileWidth: tileWidth, tileHeight: tileHeight} = geometry;
-    const asTileset = TileSource.asTileset(tilemap, tileSource);
-    const fromLayer = tilemap.getLayer(fromLayerId);
-    const grid = new Grid();
-    let dynamicLayer = tilemap.createDynamicLayer(toLayerId, asTileset, x, y, width, height, tileWidth, tileHeight);
+    throw new Exception("Still in development");
+    // geometry = geometry || {};
+    // let {x: x, y: y, width: width, height: height, tileWidth: tileWidth, tileHeight: tileHeight} = geometry;
+    // const asTileset = TileSource.asTileset(tilemap, tileSource);
+    // const fromLayer = tilemap.getLayer(fromLayerId);
+    // const grid = new Grid();
+    // let dynamicLayer = tilemap.createDynamicLayer(toLayerId, asTileset, x, y, width, height, tileWidth, tileHeight);
 
 
-    return dynamicLayer;
+    // return dynamicLayer;
 }
 
 Autotile.createSubtilerDynamicLayer = createSubtilerDynamicLayer;
 
-module.exports = Autotile;
+// Is this even necessary in the modern era?
+// module.exports = Autotile;

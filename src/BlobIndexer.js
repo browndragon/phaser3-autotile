@@ -1,4 +1,4 @@
-import Phaser;
+import Phaser from 'phaser';
 import Id from "./Id.js";
 
 /**
@@ -90,7 +90,7 @@ export default class BlobIndexer {
      * @returns {Phaser.Tilemaps.Tileset} - The resulting blob tileset.
      */
     toTileset(config) {
-        {
+        let {
             tilesetName,
             tm,
             subtiles: {
@@ -101,7 +101,7 @@ export default class BlobIndexer {
             },
             firstgid=0
         } = config;
-        {textureKey=tilesetName} = config;
+        let {textureKey=tilesetName} = config;
 
         const sourceIndex = 0;
         let frames = {};

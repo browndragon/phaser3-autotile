@@ -74,7 +74,7 @@ export default class Id {
      */
     static toBlob(wangId) {
         // Unset the corners if the edges are unset.
-        const [BOTH_NE_EDGES, BOTH_SE_EDGES, BOTH_SW_EDGES, BOTH_NW_EDGES] = [NN | EE, EE | SS, SS | WW, WW | NN];
+        const [BOTH_NE_EDGES, BOTH_SE_EDGES, BOTH_SW_EDGES, BOTH_NW_EDGES] = [Id.NN | Id.EE, Id.EE | Id.SS, Id.SS | Id.WW, Id.WW | Id.NN];
         if (wangId & BOTH_NE_EDGES != BOTH_NE_EDGES) {
             wangId &= ~NE;
         }
@@ -103,14 +103,14 @@ export default class Id {
 }
 
 /** Constants for the directional components of a WangId. */
-Id.NN = 0x00000001;
-Id.NE = 0x00000010;
-Id.EE = 0x00000100;
-Id.SE = 0x00001000;
-Id.SS = 0x00010000;
-Id.SW = 0x00100000;
-Id.WW = 0x01000000;
-Id.NW = 0x10000000;
+Id.NN = 0b00000001;
+Id.NE = 0b00000010;
+Id.EE = 0b00000100;
+Id.SE = 0b00001000;
+Id.SS = 0b00010000;
+Id.SW = 0b00100000;
+Id.WW = 0b01000000;
+Id.NW = 0b10000000;
 
 
 /**

@@ -129,7 +129,7 @@ export default class Grid {
  * @readonly
  * @enum {string}
  */
-Grid.Overflow {
+Grid.Overflow = {
     /** Circle back to the other end of the grid rect. */
     TORUS: "torus",
     /** Use the nearest cell in the grid. */
