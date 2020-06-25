@@ -4,7 +4,15 @@
 * @license      {@link https://github.com/browndragon/phaser3-autotile/blob/master/LICENSE|MIT License}
 */
 
-var BasePlugin = function (scene)
+import {Rectangle, Point} from "./Bindings.js";
+import BlobIndexer from "./BlobIndexer.js";
+import Grid from "./Grid.js";
+import Id from "./Id.js";
+import Subtiles from "./Subtiles.js";
+import Phaser from 'phaser';
+
+
+export var BasePlugin = function (scene)
 {
     //  The Scene that owns this plugin
     this.scene = scene;
@@ -119,6 +127,41 @@ BasePlugin.prototype = {
 
 BasePlugin.prototype.constructor = BasePlugin;
 
-//  Make sure you export the plugin for webpack to expose
+export default class Autotile {}
+Autotile.BlobIndexer = BlobIndexer;
+Autotile.Grid = Grid;
+Autotile.Id = Id;
+// TODO: HACK. Use the actual plugin to modify various loading steps.
+Autotile.BasePlugin = BasePlugin;
 
-module.exports = BasePlugin;
+
+/**
+ * Method monkeypatched into tilemap to create a dynamic layer whose content is initially -- and thereafter! -- maintained with a Grid and TileSource.
+ * @param {Phaser.Tilemaps.Tilemap} tilemap - The tilemap to monkeypatch into.
+ * @param {integer|string} layerId - The name of this new layer.
+ * @param {TileSource} tileSource - The tile source to use for doing autotile layout.
+ * @param {object} geometry - The geometry to use for this layout.
+ * @param {number} [geometry.x] - The x position to place the layer in the world (default 0).
+ * @param {number} [geometry.y] - The y position to place the layer in the world (default 0).
+ * @param {integer} geometry.width - The x position to place the layer in the world (default 0).
+ * @param {integer} geometry.height - The y position to place the layer in the world (default 0).
+ * @param {integer} geometry.tileWidth - The x position to place the layer in the world (default 0).
+ * @param {integer} geometry.tileHeight - The y position to place the layer in the world (default 0).
+ */
+function createSubtilerDynamicLayer(tilemap, fromLayerId, toLayerId, tileSource, geometry) {
+    throw "Still in development";
+    // geometry = geometry || {};
+    // let {x: x, y: y, width: width, height: height, tileWidth: tileWidth, tileHeight: tileHeight} = geometry;
+    // const asTileset = TileSource.asTileset(tilemap, tileSource);
+    // const fromLayer = tilemap.getLayer(fromLayerId);
+    // const grid = new Grid();
+    // let dynamicLayer = tilemap.createDynamicLayer(toLayerId, asTileset, x, y, width, height, tileWidth, tileHeight);
+
+
+    // return dynamicLayer;
+}
+
+Autotile.createSubtilerDynamicLayer = createSubtilerDynamicLayer;
+
+// Is this even necessary in the modern era?
+// module.exports = Autotile;
