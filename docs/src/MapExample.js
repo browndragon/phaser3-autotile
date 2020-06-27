@@ -11,7 +11,7 @@ import Map3 from "./map3.csv";
 
 import Autotile from "phaser3-autotile";
 
-const {Id, Grid, BlobIndexer} = Autotile;
+const {Ids, Pointwise, Subtiles, Textures} = Autotile;
 
 var config = {
     type: Phaser.WEBGL,
@@ -41,8 +41,8 @@ function preload() {
     this.load.tilemapCSV('map3', Map3);
 }
 
-const tilesets = ["corner", "edge", "blob"];
-let ct = 0;
+const layouts = [Ids.Corner, Ids.Edge, Ids.Blob];
+let cl = 0;
 const maps = ["map1", "map2", "map3"];
 let cm = 0;
 
@@ -50,7 +50,7 @@ let cursors;
 let blockmap;
 let autotilemap;
 let isVisible = false;
-let blobIndexer;
+let subtiles;
 let blobTileset;
 
 function createLayer() {
@@ -59,65 +59,39 @@ function createLayer() {
     blockmap.addTilesetImage("block");
     blockmap.createStaticLayer(0, "block", 32, 48).setAlpha(isVisible ? .1 : .9);
 
-    // The actual magic! Now we use a Grid to parse the map and put another layer on top of it which does autotiling. We happen to know this object's size based on the CSVs.
-    let grid = new Grid(new Phaser.Geom.Rectangle(0, 0, 6, 6), (x, y) => blockmap.getTileAt(x, y, true, 0).index == 1);
-
-    const tilesetName = tilesets[ct];
-    // let tileSize = 16;
-    // if (tilesetName == "blob") {
-    //     tileSize = 8;
-    // }
+    const layout = layouts[cl];
+    const tilesetName = layout.name;
     autotilemap = this.add.tilemap(null, 16, 16)
-    autotilemap.addTilesetImage(tilesetName);
+    // This works because the layout names are exactly the same as the texture names; it's kind of a pun.
+    autotilemap.addTilesetImage(layout.name);
     autotilemap.createBlankDynamicLayer(0, tilesetName, 32, 48).setAlpha(isVisible ? .9 : .1);
+    const pointwise = new Pointwise(new Phaser.Geom.Rectangle(0, 0, 6, 6));
+    const isSet = pointwise.wrap((x, y) => blockmap.getTileAt(x, y, true, 0).index == 1, false);
 
-    var tiler;
-    switch (tilesetName) {
-        case "corner":
-        tiler = Id.tiler(Id.toCorner, Id.BRIGITTS_CROSS_PATTERN, 0);
-        break;
-        case "edge":
-        tiler = Id.tiler(Id.toEdge, Id.EDGE_PATTERN, 0);
-        break;
-        case "blob":
-        tiler = blobIndexer.toTiler(0);
-        break;
-    }
-
-
-    for (let y = 0; y < 6; ++y) {
-        for (let x = 0; x < 6; ++x) {
-            const wangId = grid.getId(x, y);
-            if (wangId == null || wangId == 0 && !grid.isSet(x, y)) {
-                continue;
-            }
-            const tileId = tiler(wangId);
-            autotilemap.putTileAt(tileId, x, y);
+    pointwise.forEach((x, y) => {
+        const wangId = layout.wangId(isSet, x, y);
+        if (wangId == null) {
+            return;
         }
-    }
+        const tileId = layout.tileId(wangId);
+        autotilemap.putTileAt(tileId, x, y);
+    });
 }
 
 function create() {
     // When loading a CSV map, make sure to specify the tileWidth and tileHeight
     cursors = this.input.keyboard.createCursorKeys();
-    blobIndexer = new BlobIndexer({
-        bases: {
-            [Id.NN | Id.EE | Id.SS | Id.WW]: this.textures.get("rawblob").get(1),
-            [Id.EE | Id.SE | Id.SS]: this.textures.get("rawblob").get(2),
-            [Id.SS | Id.SW | Id.WW]: this.textures.get("rawblob").get(3),
-            [Id.NN | Id.NE | Id.EE]: this.textures.get("rawblob").get(4),
-            [Id.NN | Id.WW | Id.NW]: this.textures.get("rawblob").get(5),
-        }
-    });
-    blobTileset = blobIndexer.toTileset({
-      tilesetName: "blob",
-      tm: this.textures,
-      firstgid: 0,
-      subtiles: {
+    subtiles = Subtiles.RpgMakerFormatFromGeometry({
         tileWidth: 16,
         tileHeight: 16,
-      },
     });
+    Textures.CreateBlobTexture({
+        key: "blob",
+        rawTexture: "rawblob",
+        tm: this.textures,
+        subtiles: subtiles, 
+    });
+
     var help = this.add.text(16, 16, 'Up/down swap map, left/right swap tiles; spacebar twiddles autotile visibility', {
         fontSize: '18px',
         fill: '#ffffff'
@@ -129,23 +103,19 @@ function create() {
 function update (time, delta) {
     let updating = false;
     if (Phaser.Input.Keyboard.JustUp(cursors.up)) {
-        cm += maps.length - 1;
-        cm %= maps.length;
+        cm = Pointwise.Mod(0, maps.length, cm-1);
         updating = true;
     }
     if (Phaser.Input.Keyboard.JustUp(cursors.down)) {
-        cm += 1;
-        cm %= maps.length;
+        cm = Pointwise.Mod(0, maps.length, cm+1);
         updating = true;
     }
     if (Phaser.Input.Keyboard.JustUp(cursors.left)) {
-        ct += tilesets.length - 1;
-        ct %= tilesets.length;
+        cl = Pointwise.Mod(0, layouts.length, cl-1);
         updating = true;
     }
     if (Phaser.Input.Keyboard.JustUp(cursors.right)) {
-        ct += 1;
-        ct %= tilesets.length;
+        cl = Pointwise.Mod(0, layouts.length, cl+1);
         updating = true;
     }
     if (Phaser.Input.Keyboard.JustUp(cursors.space)) {

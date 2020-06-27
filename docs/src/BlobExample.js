@@ -5,7 +5,7 @@ import RawBlobI from "./rawblob.png";
 
 import Autotile from "phaser3-autotile";
 
-const {Id, Grid, BlobIndexer} = Autotile;
+const {Ids, Subtiles, Textures} = Autotile;
 
 var config = {
     type: Phaser.WEBGL,
@@ -32,23 +32,15 @@ function preload() {
 }
 
 function create() {
-    let blobIndexer = new BlobIndexer({
-        bases: {
-            [Id.NN | Id.EE | Id.SS | Id.WW]: this.textures.get("rawblob").get(1),
-            [Id.EE | Id.SE | Id.SS]: this.textures.get("rawblob").get(2),
-            [Id.SS | Id.SW | Id.WW]: this.textures.get("rawblob").get(3),
-            [Id.NN | Id.NE | Id.EE]: this.textures.get("rawblob").get(4),
-            [Id.NN | Id.WW | Id.NW]: this.textures.get("rawblob").get(5),
-        }
-    });
-    let blobTileset = blobIndexer.toTileset({
-      tilesetName: "blob",
-      tm: this.textures,
-      firstgid: 0,
-      subtiles: {
+    const subtiles = Subtiles.RpgMakerFormatFromGeometry({
         tileWidth: 16,
         tileHeight: 16,
-      },
+    });
+    Textures.CreateBlobTexture({
+        key: "blob",
+        rawTexture: "rawblob",
+        tm: this.textures,
+        subtiles: subtiles, 
     });
 
     this.add.text(16, 16, "Raw:", {
@@ -76,11 +68,11 @@ function create() {
             fill: '#ffffff'
         });
         y += 16;
-        for (const [base, tile] of Object.entries(blobIndexer.originalTiles)) {
-            let img = this.add.image(x, y, tile.texture.key, tile.name);
+        for (const [index, frame] of Object.entries(this.textures.get("rawblob").frames)) {
+            let img = this.add.image(x, y, frame.texture.key, frame.name);
             img.setScale(2);
             img.setOrigin(0, 0);
-            this.add.text(x+2, y+2, `T:${tile.name}\nW:${base}`, {
+            this.add.text(x+2, y+2, `T:${frame.name}`, {
                 fontSize: '12px',
                 fill: '#A0A000'
             });
@@ -95,17 +87,17 @@ function create() {
             fill: '#ffffff'
         });
         y += 16;
-        for (const corner of [Id.NE, Id.SE, Id.SW, Id.NW]) {
+        for (const corner of [Ids.NE, Ids.SE, Ids.SW, Ids.NW]) {
             this.add.text(x, y, `Corner: ${corner}`, {
                 fontSize: '12px',
                 fill: '#ffffff'
             });
             y += 16;
-            for (const [wangId, tile] of Object.entries(blobIndexer.subtiles[corner])) {
-                let img = this.add.image(x, y, tile.texture.key, tile.name);
+            for (const [wangIdStr, tileId] of Object.entries(subtiles.subtiles[corner])) {
+                let img = this.add.image(x, y, "blob", tileId);
                 img.setScale(2);
                 img.setOrigin(0, 0);
-                this.add.text(x+2, y+2, `W:${wangId}`, {
+                this.add.text(x+2, y+2, `W:${wangIdStr}`, {
                     fontSize: '12px',
                     fill: '#A0A000'
                 });
@@ -123,7 +115,7 @@ function create() {
         fill: '#ffffff'
     });
     const [xminf, yminf] = [xmin, ymin];
-    for (const [wangIdStr, tileId] of Object.entries(Id.LITERAL_BLOB_PATTERN)) {
+    for (const [wangIdStr, tileId] of Object.entries(Ids.TileIds.LITERAL_BLOB)) {
         const wangId = +wangIdStr;
         const [xmin, ymin] = [xminf + 128 * (tileId % 8), yminf + 32 + 64 * Math.floor(tileId / 8)];
         let [x, y] = [xmin, ymin];
@@ -138,15 +130,14 @@ function create() {
         }
         x += 32;
         let subx = x;
-        const corners = [[Id.NW, Id.NE], [Id.SW, Id.SE]];
+        const corners = [[Ids.NW, Ids.NE], [Ids.SW, Ids.SE]];
         for (const row of corners) {
             for (const cell of row) {
-                const subWangId = blobIndexer.getSubtileWangId(wangId, cell);
-                const subTile = blobIndexer.getSubtile(wangId, cell);
-                // Maybe?
-                let img = this.add.image(subx, y, subTile.texture.key, +subTile.name);
+                const subWangId = Ids.Subtile[cell].project(wangId);
+                const tileId = subtiles.tileId(wangId, cell);
+                let img = this.add.image(subx, y, "blob", tileId);
                 img.setOrigin(0, 0);
-                this.add.text(subx + 2, y + 2, `[${subTile.name}]`, {
+                this.add.text(subx + 2, y + 2, `[${tileId}]`, {
                     fontSize: '10px',
                     fill: '#A0A000'
                 });

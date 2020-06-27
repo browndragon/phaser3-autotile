@@ -8,7 +8,7 @@ import RawBlobI from "./rawblob.png";
 
 import Autotile from "phaser3-autotile";
 
-const {Id, Grid, BlobIndexer} = Autotile;
+const {Ids, Pointwise, Subtiles, Textures} = Autotile;
 
 var config = {
     type: Phaser.WEBGL,
@@ -38,23 +38,15 @@ function preload() {
 }
 
 function create() {
-    let blobIndexer = new BlobIndexer({
-        bases: {
-            [Id.NN | Id.EE | Id.SS | Id.WW]: this.textures.get("rawblob").get(1),
-            [Id.EE | Id.SE | Id.SS]: this.textures.get("rawblob").get(2),
-            [Id.SS | Id.SW | Id.WW]: this.textures.get("rawblob").get(3),
-            [Id.NN | Id.NE | Id.EE]: this.textures.get("rawblob").get(4),
-            [Id.NN | Id.WW | Id.NW]: this.textures.get("rawblob").get(5),
-        }
-    });
-    let blobTileset = blobIndexer.toTileset({
-      tilesetName: "blob",
-      tm: this.textures,
-      firstgid: 0,
-      subtiles: {
+    const subtiles = Subtiles.RpgMakerFormatFromGeometry({
         tileWidth: 16,
         tileHeight: 16,
-      },
+    });
+    Textures.CreateBlobTexture({
+        key: "blob",
+        rawTexture: "rawblob",
+        tm: this.textures,
+        subtiles: subtiles, 
     });
 
     var help = this.add.text(16, 16, "The frames of the various tile parts:", {
@@ -91,11 +83,9 @@ function create() {
         for (let ty = 0; ty < 16; ++ty) {
             for (let tx = 0; tx < 16; ++tx) {
                 const rawWangId = ty*16 + tx;
-                const wangId = Id.toBlob(rawWangId);
+                const wangId = Ids.Blob.project(rawWangId);
                 const [x, y] = [tx * 80 + 32, ty * 80 + 128];
-                const tileId = blobIndexer.toTiler(0)(wangId);
-                // Cheat a little: don't bother *using* the resultant tileset,
-                // just the image + its frames.
+                const tileId = Ids.Blob.tileId(wangId);
                 let newSprite = this.add.sprite(x, y, "blob", tileId);
                 newSprite.originX = 0;
                 newSprite.originY = 0;

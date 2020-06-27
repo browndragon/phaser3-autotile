@@ -9,10 +9,10 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 module.exports = {
   mode: 'development',
   entry: {
-    autotiling: './src/AutotilingExample.js',
-    blobIndexer: './src/BlobIndexerExample.js',
-    dynamic: './src/DynamicExample.js',
-    tilesheet: './src/TilesheetExample.js',
+    blob: './src/BlobExample.js',
+    map: './src/MapExample.js',
+    playpen: './src/PlaypenExample.js',
+    tile_ids: './src/TileIdsExample.js',
   },
   module: {
     rules: [
