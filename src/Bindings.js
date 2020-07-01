@@ -5,6 +5,7 @@
  */
 import Phaser from 'phaser';
 
+// Doubles as a workaround for https://github.com/webpack/webpack/issues/8762
 export const Rectangle = Phaser.Geom.Rectangle;
 export const Point = Phaser.Geom.Point;
 /** 
