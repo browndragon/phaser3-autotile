@@ -25,27 +25,27 @@
  * Specific methods for deriving wangIds from datastructures.
  */
 export class Getter {
-  /**
+    /**
      * @parameter {object} params - The container arg.
      * @parameter {string} params.name - A name for this IdType.
      * @parameter {function(IdType~IsSet, integer, integer):WangId?} params.wangId - A method which calculates wangIds given an `isSet`` callback and a specific `x,y`.
      * @parameter {function(WangId):WangId} params.project - Returns the wangId appropriate to this IdType for the given (possibly more fully-featured) wangId. For instance, an edge tileset should turn off corners.
      */
-  constructor({wangId, project}={}) {
-    this.wangId = wangId;  // Exposed & invoked as a method.
-    this.project = project;  // Exposed & invoked as a method.
-  }
+    constructor({wangId, project}={}) {
+        this.wangId = wangId;  // Exposed & invoked as a method.
+        this.project = project;  // Exposed & invoked as a method.
+    }
 }
 
 const WangIds = {
-  NN: 0b00000001,
-  NE: 0b00000010,
-  EE: 0b00000100,
-  SE: 0b00001000,
-  SS: 0b00010000,
-  SW: 0b00100000,
-  WW: 0b01000000,
-  NW: 0b10000000
+    NN: 0b00000001,
+    NE: 0b00000010,
+    EE: 0b00000100,
+    SE: 0b00001000,
+    SS: 0b00010000,
+    SW: 0b00100000,
+    WW: 0b01000000,
+    NW: 0b10000000
 };
 WangIds.Getter = Getter;
 
