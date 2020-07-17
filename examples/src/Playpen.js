@@ -3,9 +3,7 @@ import Phaser from 'phaser';
 import BlockI from './block.png';
 import RawBlobI from './rawblob.png';
 
-import Autotile from 'phaser3-autotile';
-
-const {Ids, Pointwise, Subtiles, Textures, Tilesets} = Autotile;
+import {Ids, Patterns, Pointwise} from 'phaser3-autotile';
 
 var config = {
     type: Phaser.WEBGL,
@@ -30,9 +28,8 @@ function preload() {
     this.load.spritesheet('rawblob', RawBlobI, assetSize);
 }
 
-const [xBoard, yBoard] = [32, 48];
 let autotilemap;
-let subtiles;
+const [xBoard, yBoard] = [32, 48];
 let cursor = new Phaser.Geom.Rectangle(0, 0, 1, 1);
 let cursors;
 let graphics;
@@ -40,36 +37,28 @@ let grid;
 
 class Grid {
     constructor(x=0, y=0, width=24, height=24) {
-        this.pointwise = new Pointwise(x, y, width, height, Pointwise.Adjustment.MOD);
+        this.pointwise = new Pointwise(x, y, width, height, 1, 1, Pointwise.Adjustment.MOD);
         this.grid = new Map();
-        this.isSetCallback = this.isSet.bind(this);
+        this.isSetCallback = this.pointwise.wrap((x, y) => this.has(x, y));
     }
-    static id (x, y) {
-        return [x, y].join(',');
-    }
-    isSet(x, y) {
-        return this.pointwise.evaluateAt((x, y) => !!this.grid.has(Grid.id(x, y)), x, y, false);
+    has(x, y) {
+        return !!this.grid.has(''+[x, y]);
     }
     set(x, y) {
-        this.pointwise.evaluateAt((x, y) => this.grid.set(Grid.id(x, y), true), x, y);
+        this.grid.set(''+[x, y], true);
     }
     unset(x, y) {
-        this.pointwise.evaluateAt((x, y) => this.grid.delete(Grid.id(x, y)), x, y);
+        this.grid.delete(''+[x, y]);
     }
 }
 
 function create() {
     cursors = this.input.keyboard.createCursorKeys();
     grid = new Grid(0, 0, 24, 24);
-    subtiles = Subtiles.RpgMakerFormatFromGeometry({
-        tileWidth: 16,
-        tileHeight: 16,
-    });
-    Textures.CreateBlobTexture({
-        key: 'blob',
-        rawTexture: 'rawblob',
-        tm: this.textures,
-        subtiles: subtiles, 
+    this.textures.generateBlobAutotileTexture('blob', {
+        subtileGeometry: {
+            tileWidth: 16,
+        }
     });
 
     this.add.text(16, 16, 'Navigate arrows, shift erase, space draw', {
@@ -92,7 +81,7 @@ function drawUI() {
                 autotilemap.removeTileAt(x, y);
                 return;
             }
-            const tileId = Tilesets.Patterns.LITERAL_BLOB[wangId];
+            const tileId = Patterns.LITERAL_BLOB[wangId];
             autotilemap.putTileAt(tileId, x, y);            
         },
         new Phaser.Geom.Rectangle(cursor.x-1, cursor.y-1, 3, 3)
@@ -109,7 +98,7 @@ function drawUI() {
             alpha:.1
         },
     });
-    let drawRect = new Phaser.Geom.Rectangle(32 + 16 * cursor.x, 48 + 16 * cursor.y, 16, 16);
+    let drawRect = new Phaser.Geom.Rectangle(xBoard + 16 * cursor.x, yBoard + 16 * cursor.y, 16, 16);
     graphics.fillRectShape(drawRect);
     graphics.strokeRectShape(drawRect);
     graphics.strokeRect(31, 47, grid.pointwise.width * 16 + 1, grid.pointwise.height * 16 + 1);

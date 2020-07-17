@@ -12,17 +12,17 @@ module.exports = {
         blob: './src/Blob.js',
         map: './src/Map.js',
         playpen: './src/Playpen.js',
-        tile_ids: './src/TileIds.js'
+        tiled: './src/Tiled.js',
     },
     module: {
         rules: [
             { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
             { test: [/\.vert$/, /\.frag$/], use: 'raw-loader' },
             {
-                test: /\.(gif|png|jpe?g|svg|xml)$/i,
+                test: /\.(gif|png|jpe?g|svg|xml|csv)$/i,
                 use: 'file-loader'
             },
-            { test: /\.(csv)$/i, use: 'file-loader'},
+            { test: /\.(json)$/i, use: 'file-loader', type: 'javascript/auto'},
         ]
     },
     output: {

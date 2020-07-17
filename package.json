@@ -1,8 +1,8 @@
 {
   "name": "phaser3-autotile",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Phaser 3 Autotile",
-  "main": "src/Autotile.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "webpack",
     "examples": "webpack-dev-server -d --context examples --config examples/webpack.config.js --open",
@@ -60,6 +60,7 @@
     },
     "moduleDirectories": [
       "src",
+      "__mocks__",
       "node_modules"
     ]
   }

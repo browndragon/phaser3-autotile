@@ -9,9 +9,7 @@ import Map1 from './map1.csv';
 import Map2 from './map2.csv';
 import Map3 from './map3.csv';
 
-import Autotile from 'phaser3-autotile';
-
-const {Ids, Pointwise, Subtiles, Textures, Tilesets} = Autotile;
+import {Ids, Patterns, Pointwise} from 'phaser3-autotile';
 
 var config = {
     type: Phaser.WEBGL,
@@ -42,9 +40,9 @@ function preload() {
 }
 
 const layouts = [
-    ['corner', Ids.Corner, Tilesets.Patterns.BRIGITTS_CROSS],
-    ['edge', Ids.Edge, Tilesets.Patterns.EDGE],
-    ['blob', Ids.Blob, Tilesets.Patterns.LITERAL_BLOB]
+    ['corner', Ids.Corner, Patterns.BRIGITTS_CROSS],
+    ['edge', Ids.Edge, Patterns.EDGE],
+    ['blob', Ids.Blob, Patterns.LITERAL_BLOB]
 ];
 let cl = 0;
 const maps = ['map1', 'map2', 'map3'];
@@ -54,16 +52,23 @@ let cursors;
 let blockmap;
 let autotilemap;
 let isVisible = false;
-let subtiles;
 
 function createLayer() {
     // The underlying image changes, so we don't just cache the map.
+    // This is the "minimal" invocation to make a map in phaser3 with its existing API, and has nothing to do with autotiling extensions:
+    // 1) Create a tilemap with fixed tilesize in pixels. This version also preloads with cached tile config.
     blockmap = this.add.tilemap(maps[cm], 16, 16);
+    // 2) Give it a tileset image (assumed to have same geometry as the map itself).
     blockmap.addTilesetImage('block');
+    // 3) Create a layer (which is a real game object) which should line up with the input data -- needs same layerid/name, same tileset or tileset name, and arbitrary initial position. This is upper-left-corner oriented, not center (as with other sprites). 
     blockmap.createStaticLayer(0, 'block', 32, 48).setAlpha(isVisible ? .1 : .9);
 
+    // Select an autotile.
     const [tilesetName, layout, pattern] = layouts[cl];
+
+    // So then do the same for our autotile. This version is not seeded with data, because autotiles expect to be told where & what to draw.
     autotilemap = this.add.tilemap(null, 16, 16);
+    // As before, add a tileset image.
     autotilemap.addTilesetImage(tilesetName);
     autotilemap.createBlankDynamicLayer(0, tilesetName, 32, 48).setAlpha(isVisible ? .9 : .1);
     const pointwise = new Pointwise(0, 0, 6, 6);
@@ -82,15 +87,10 @@ function createLayer() {
 function create() {
     // When loading a CSV map, make sure to specify the tileWidth and tileHeight
     cursors = this.input.keyboard.createCursorKeys();
-    subtiles = Subtiles.RpgMakerFormatFromGeometry({
-        tileWidth: 16,
-        tileHeight: 16,
-    });
-    Textures.CreateBlobTexture({
-        key: 'blob',
-        rawTexture: 'rawblob',
-        tm: this.textures,
-        subtiles: subtiles, 
+    this.textures.generateBlobAutotileTexture('blob', {
+        subtileGeometry: {
+            tileWidth: 16,
+        }
     });
 
     this.add.text(16, 16, 'Up/down swap map, left/right swap tiles; spacebar twiddles autotile visibility', {

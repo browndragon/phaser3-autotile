@@ -1,6 +1,5 @@
 import Ids from './Ids';
 
-
 /** Returns an is-set over the 3x3 rectangle at 0,0. */
 function mockSet({cc=true, nn=false, ne=false, ee=false, se=false, ss=false, sw=false, ww=false, nw=false} = {}) {
     const data = [
@@ -55,5 +54,5 @@ describe('Math', function () {
         [{nn:true, ee:true, ss:true, ww:true}, 0b01010101],
     ])('.Edge.wangId(%s)', (dirs, expectedWangId) => {
         expect(Ids.Edge.wangId(mockSet(dirs), 1, 1)).toEqual(expectedWangId);
-    });
+    });   
 });

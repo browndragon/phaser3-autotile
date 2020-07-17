@@ -1,6 +1,6 @@
 import Ids from './Ids';
-import Subtiles from './Subtiles';
-import Tilesets from './Tilesets';
+import Patterns from './Patterns';
+import Pointwise from './Pointwise';
 
 import Phaser from 'phaser';
 
@@ -8,70 +8,128 @@ import Phaser from 'phaser';
  * Utilities to create blob textures out of parts.
  */
 export default class Textures {
+    static register() {
+        /**
+         * Generates a full blob tileset by slicing & dicing the input config.
+         * @parameter {string} key - The name under which to generate the new texture.
+         * @parameter {object} config - The configuration to use in generating this autotile.
+         * @parameter {string} [config.fromKey=`raw${key}`] - The input texture.
+         * @parameter {Patterns.SubtileGeometry} [config.subtileGeometry={}] - The geometry of the input texture.
+         * @parameter {Pattern} [config.pattern=Patterns.RPG_MAKER] - The logical pattern the texture represents.
+         * @parameter {Pattern} [config.outputPattern=Patterns.BLOB_LITERAL] - The logical pattern the texture represents.
+         * @parameter {HTMLCanvasElement} [canvas=null] - The canvas to write into (or null and this will create one).
+         * @parameter {boolean} resizeCanvas - Whether to resize the target canvas to match the blob geometry.
+         * @parameter {boolean} clearCanvas - Whether to clear the target canvas first.
+         * @parameter {Phaser.Types.Create.GenerateTextureCallback} preRender - To be called on the canvas before rendering.
+         * @parameter {Phaser.Types.Create.GenerateTextureCallback} preRender - To be called on the canvas post rendering.
+         */
+        Phaser.Textures.TextureManager.prototype.generateBlobAutotileTexture = function(key, config) {
+            const {
+                fromKey,
+                subtileGeometry,
+                pattern,
+                outputPattern,
+                canvas,
+                resizeCanvas,
+                clearCanvas,
+                preRender,
+                postRender
+            } = config;
+            return Textures.CreateBlobTexture(this, key, fromKey, subtileGeometry, pattern, outputPattern, canvas, resizeCanvas, clearCanvas, preRender, postRender);
+        };
+    }
+
     /**
-     * Provides a 47 tile blob tileset given input tiles.
-     * @parameter {object} config - The blob tileset configuration.
-     * @parameter {string} config.key - The name to give the output texture.
-     * @parameter {string} config.rawTexture - The name for the input texture.
-     * @parameter {Phaser.Textures.TextureManager} config.tm - The texture manager to create this canvas under (and load the raw texture from).
-     * @parameter {Subtiles} config.subtiles - The index & geometry of subtile parts to stitch together.
-     * @returns {Phaser.Tilemaps.Tileset} - The resulting blob tileset.
+     * Provides a 47 tile blob tileset given input tiles. This implements `Phaser.Textures.TextureManager.generateBlobAutotileTexture` with the obvious parameter mappings.
      */
-    static CreateBlobTexture(config) {
+    static CreateBlobTexture(textureManager, key, fromKey=`raw${key}`, subtileGeometry={}, pattern=Patterns.RPG_MAKER, outputPattern=Patterns.LITERAL_BLOB, canvas=null, resizeCanvas=true, clearCanvas=true, preRender=null, postRender=null) {
+        if (!textureManager.checkKey(key)) {
+            throw 'key already in use';
+        }
         const {
-            key,
-            rawTexture,
-            tm,
-            subtiles,
-        } = config;
+            tileWidth, tileHeight, topLeftWidth, topLeftHeight,
+            margin: [tm, rm, bm, lm],
+            spacing: [sx, sy]
+        } = Patterns.NormalizeGeometry(subtileGeometry);
+        let cornerIndex = Patterns.IndexByCorner(pattern); 
 
-        const sourceIndex = 0;
-        const texture = tm.createCanvas(key, subtiles.tileWidth, 47 * subtiles.tileHeight);
-        if (!texture) {
-            throw 'Couldn\'t create backing canvas';
+        const sourceTexture = textureManager.get(fromKey);
+        const sourceFrame = sourceTexture.get('__BASE');
+        const srcRes = sourceFrame.source.resolution;
+        const sourcePointwise = new Pointwise(
+            sourceFrame.x + lm,
+            sourceFrame.y + tm,
+            sourceFrame.width - lm - rm,
+            sourceFrame.height - tm - bm,
+            tileWidth + sx,
+            tileHeight + sy
+        );
+
+        const [canvasWidth, canvasHeight] = [tileWidth, 47*tileHeight];
+        if (!canvas) {
+            canvas = Phaser.Display.Canvas.CanvasPool.create2D(this, canvasWidth, canvasHeight);
+            resizeCanvas=false;
+            clearCanvas=false;            
         }
-        let frameRect = new Phaser.Geom.Rectangle(0, 0, subtiles.tileWidth, subtiles.tileHeight);
+        if (resizeCanvas) {
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+        }
+        let ctx = canvas.getContext('2d');
+        if (clearCanvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
+        if (preRender) {
+            preRender(canvas, ctx);
+        }
         // Iterate over the target frames.
-        for (const [wangIdStr, index] of Object.entries(Tilesets.Patterns.LITERAL_BLOB)) {
-            const wangId = +wangIdStr;
-            // Relative to the texture.
-            frameRect = frameRect.setPosition(0, index * subtiles.tileHeight);
-
+        for (const [wangId, index] of Object.entries(outputPattern)) {
+            const [dstPX, dstPY] = [0, index * tileHeight];
             for (let corner of [Ids.NE, Ids.SE, Ids.SW, Ids.NW]) {
-                const frame = tm.getFrame(rawTexture, subtiles.tileId(wangId, corner));
+                const [offsetX, offsetY] = [
+                    Patterns.SubtileCornerOffsets[corner][0] * topLeftWidth,
+                    Patterns.SubtileCornerOffsets[corner][1] * topLeftHeight,
+                ];
+                const [subtileWidth, subtileHeight] = [
+                    !offsetX ? topLeftWidth : tileWidth - topLeftWidth,
+                    !offsetY ? topLeftHeight : tileHeight - topLeftHeight
+                ];
 
-                if (!frame) {
-                    throw 'Can\'t find necessary subtile';
-                }
+                const cornerWangId = Patterns.LookupWangIdIndex(cornerIndex, corner, wangId);
+                const tileId = pattern[cornerWangId];
+                const [srcPX, srcPY] = sourcePointwise.nth(tileId);
 
-                // Relative to the source image.
-                const tileCanvas = frame.canvasData;
-                const srcRes = frame.source.resolution;
+                const [srcX, srcY, srcWidth, srcHeight] = [
+                    srcPX + offsetX * srcRes,
+                    srcPY + offsetY * srcRes,
+                    subtileWidth * srcRes,
+                    subtileHeight * srcRes,
+                ];
+                const [dstX, dstY, dstWidth, dstHeight] = [
+                    dstPX + offsetX,
+                    dstPY + offsetY,
+                    subtileWidth,
+                    subtileHeight,
+                ];
 
-                // Relative to the frame.
-                const subframeRect = subtiles.subTileGeometry(corner);
-                const srcCoords = Subtiles.InSrcCoords(subframeRect, tileCanvas, srcRes);
-                // Relative to the texture.
-                const dstCoords = Subtiles.InDstCoords(subframeRect, frameRect);
-                texture.context.drawImage(
-                    frame.source.image,
-                    srcCoords.x,
-                    srcCoords.y,
-                    srcCoords.width,
-                    srcCoords.height,
-                    dstCoords.x,
-                    dstCoords.y,
-                    dstCoords.width,
-                    dstCoords.height
+                ctx.drawImage(
+                    sourceFrame.source.image,
+                    srcX,
+                    srcY,
+                    srcWidth,
+                    srcHeight,
+                    dstX,
+                    dstY,
+                    dstWidth,
+                    dstHeight
                 );
-                texture.update();
             }
-            texture.add(index, sourceIndex, /* x */ 0, index * subtiles.tileHeight, subtiles.tileWidth, subtiles.tileHeight);
         }
-        // Write out to GL.
-        texture.refresh();
-        return texture;
+        if (postRender) {
+            postRender(canvas, ctx);
+        }
+
+        return textureManager.addCanvas(key, canvas);
     }
 }
-
