@@ -1,5 +1,7 @@
 import Pointwise from './Pointwise';
 
+// It's a test, this is fine.
+import Phaser from 'phaser';
 
 describe('pointwise math more or less works.', () => {
     test('Basic forEach test', () => {

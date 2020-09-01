@@ -1,4 +1,5 @@
-import Phaser from 'phaser';
+// Peer dependency, don't import or you'll get a second copy! Use the global instead.
+// import Phaser from 'phaser';
 
 /**
  * @callback Pointwise~Callback

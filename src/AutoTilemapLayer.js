@@ -1,6 +1,7 @@
 import BaseAutoTilemapLayer from './BaseAutoTilemapLayer';
 
-import Phaser from 'phaser';
+// Peer dependency, don't import or you'll get a second copy! Use the global instead.
+// import Phaser from 'phaser';
 
 /**
  * Methods for StaticTilemapLayer & DynamicTilemapLayer.

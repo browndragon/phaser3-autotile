@@ -3,8 +3,8 @@ import BaseAutoTilemapLayer from './BaseAutoTilemapLayer';
 import Terrains from './Terrains';
 import TerrainParser from './TerrainParser';
 
-import Phaser from 'phaser';
-
+// Peer dependency, don't import or you'll get a second copy! Use the global instead.
+// import Phaser from 'phaser';
 
 export default class AutoTilemap extends BaseAutoTilemapLayer {
     static register() {

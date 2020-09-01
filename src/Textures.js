@@ -2,7 +2,8 @@ import Ids from './Ids';
 import Patterns from './Patterns';
 import Pointwise from './Pointwise';
 
-import Phaser from 'phaser';
+// Peer dependency, don't import or you'll get a second copy! Use the global instead.
+// import Phaser from 'phaser';
 
 /**
  * Utilities to create blob textures out of parts.

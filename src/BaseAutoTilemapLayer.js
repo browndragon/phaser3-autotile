@@ -1,6 +1,7 @@
 import Pointwise from './Pointwise';
 
-import Phaser from 'phaser';
+// Peer dependency, don't import or you'll get a second copy! Use the global instead.
+// import Phaser from 'phaser';
 
 /** Methods for TileMap & DynamicTileLayer. */
 export default class BaseAutoTilemapLayer {
