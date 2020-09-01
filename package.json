@@ -1,6 +1,6 @@
 {
   "name": "phaser3-autotile",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Phaser 3 Autotile",
   "main": "src/index.js",
   "scripts": {
