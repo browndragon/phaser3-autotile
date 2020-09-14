@@ -1,4 +1,4 @@
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 import TerrainParser from './TerrainParser';
 
 describe('smaller unit tests', ()=>{

@@ -5,7 +5,7 @@
 */
 import AutoTilemap from './AutoTilemap';
 import AutoTilemapLayer from './AutoTilemapLayer';
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 import Patterns from './Patterns';
 import Pointwise from './Pointwise';
 import Terrains from './Terrains';

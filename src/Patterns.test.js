@@ -1,5 +1,5 @@
-import Ids from './Ids';
-import Patterns from './Patterns';
+import Ids from './Ids.mjs';
+import Patterns from './Patterns.mjs';
 
 const {NN, NE, EE, SE, SS, SW, WW, NW} = Ids;
 

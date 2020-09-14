@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 /** Load the assets. */
-import RawBlobI from './rawblob.png';
+import RawBlobI from './raw/blob.png';
 
 import {Ids, Patterns, Pointwise} from 'phaser3-autotile';
 

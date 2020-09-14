@@ -1,4 +1,4 @@
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 
 /** Returns an is-set over the 3x3 rectangle at 0,0. */
 function mockSet({cc=true, nn=false, ne=false, ee=false, se=false, ss=false, sw=false, ww=false, nw=false} = {}) {

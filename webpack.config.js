@@ -7,9 +7,10 @@ module.exports = {
     mode: 'development',
     module: {
         rules: [
-            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
+            { test: /\.(js|mjs)$/, exclude: /node_modules/, loader: 'babel-loader' }
         ]
     },
+    entry: './src/index.js',
     output: {
     // path: path.join(__dirname, 'dist'),
         filename: '[name].bundle.js',

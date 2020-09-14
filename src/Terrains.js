@@ -1,4 +1,4 @@
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 
 /** Manages the set of Terrains, analogous to Tileset management in Tilemap. */
 export default class Terrains {

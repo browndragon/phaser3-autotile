@@ -372,6 +372,156 @@
                          "wangid":[0, 0, 0, 0, 0, 0, 0, 2]
                         }]
                 }]
+        }, 
+        {
+         "columns":4,
+         "firstgid":17,
+         "image":"edge.png",
+         "imageheight":64,
+         "imagewidth":64,
+         "margin":0,
+         "name":"edge",
+         "spacing":0,
+         "tilecount":16,
+         "tileheight":16,
+         "tiles":[
+                {
+                 "id":6,
+                 "type":"center"
+                }],
+         "tilewidth":16,
+         "wangsets":[
+                {
+                 "cornercolors":[],
+                 "edgecolors":[
+                        {
+                         "color":"#ff0000",
+                         "name":"",
+                         "probability":1,
+                         "tile":-1
+                        }, 
+                        {
+                         "color":"#00ff00",
+                         "name":"",
+                         "probability":1,
+                         "tile":-1
+                        }],
+                 "name":"upcoming",
+                 "tile":-1,
+                 "wangtiles":[
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":0,
+                         "vflip":false,
+                         "wangid":[1, 0, 1, 0, 2, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":1,
+                         "vflip":false,
+                         "wangid":[1, 0, 2, 0, 2, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":2,
+                         "vflip":false,
+                         "wangid":[1, 0, 2, 0, 2, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":3,
+                         "vflip":false,
+                         "wangid":[1, 0, 1, 0, 2, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":4,
+                         "vflip":false,
+                         "wangid":[2, 0, 1, 0, 2, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":5,
+                         "vflip":false,
+                         "wangid":[2, 0, 2, 0, 2, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":6,
+                         "vflip":false,
+                         "wangid":[2, 0, 2, 0, 2, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":7,
+                         "vflip":false,
+                         "wangid":[2, 0, 1, 0, 2, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":8,
+                         "vflip":false,
+                         "wangid":[2, 0, 1, 0, 1, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":9,
+                         "vflip":false,
+                         "wangid":[2, 0, 2, 0, 1, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":10,
+                         "vflip":false,
+                         "wangid":[2, 0, 2, 0, 1, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":11,
+                         "vflip":false,
+                         "wangid":[2, 0, 1, 0, 1, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":12,
+                         "vflip":false,
+                         "wangid":[1, 0, 1, 0, 1, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":13,
+                         "vflip":false,
+                         "wangid":[1, 0, 2, 0, 1, 0, 1, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":14,
+                         "vflip":false,
+                         "wangid":[1, 0, 2, 0, 1, 0, 2, 0]
+                        }, 
+                        {
+                         "dflip":false,
+                         "hflip":false,
+                         "tileid":15,
+                         "vflip":false,
+                         "wangid":[1, 0, 1, 0, 1, 0, 2, 0]
+                        }]
+                }]
         }],
  "tilewidth":16,
  "type":"map",

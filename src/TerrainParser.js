@@ -1,4 +1,4 @@
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 
 /**
  * Utilities for constructing a Pattern from an actual Tilemap/FooTileLayer/Tileset.

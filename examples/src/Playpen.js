@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 import BlockI from './block.png';
-import RawBlobI from './rawblob.png';
+import RawBlobI from './raw/blob.png';
 
 import {Ids, Patterns, Pointwise} from 'phaser3-autotile';
 

@@ -1,5 +1,5 @@
-import Ids from './Ids';
-import Patterns from './Patterns';
+import Ids from './Ids.mjs';
+import Patterns from './Patterns.mjs';
 import Pointwise from './Pointwise';
 
 // Peer dependency, don't import or you'll get a second copy! Use the global instead.
@@ -42,6 +42,7 @@ export default class Textures {
 
     /**
      * Provides a 47 tile blob tileset given input tiles. This implements `Phaser.Textures.TextureManager.generateBlobAutotileTexture` with the obvious parameter mappings.
+     * TODO: Merge with contents of `Blob.mjs`. Or delete, since this isn't super useful.
      */
     static CreateBlobTexture(textureManager, key, fromKey=`raw${key}`, subtileGeometry={}, pattern=Patterns.RPG_MAKER, outputPattern=Patterns.LITERAL_BLOB, canvas=null, resizeCanvas=true, clearCanvas=true, preRender=null, postRender=null) {
         if (!textureManager.checkKey(key)) {

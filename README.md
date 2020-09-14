@@ -18,6 +18,13 @@ autotileInitialize();
 This library supports two main methods: generating blob tileset images from a more compact representation, and reshuffling autotiles on map layers to fix up flow & corners.
 
 ## Generating blob tileset images
+### As of 0.2.4:
+Online generation of images is **deprecated**. Tiled + phaser want to know the full universe of tiles at tilemap load time. If you do online tileset generation, then there are 6 tiles as far as Tiled and load-time Phaser know, but there are 47 tiles as far as your autogeneration of tiles will know. While it's possible to create multiple maps with different tilesets and have them communicate, it's messy.
+
+Instead, see `package.json`'s `scripts > build:exampleblob`. This library exposes itself as a binary (see `tools/blob.mjs`) which can be executed as `phaser3-autotile` and especially (via `npm-watch` or equivalent) as a long-term watcher to regenerate your content.
+
+### Before 0.2.4:
+
 `Textures.js` modifies the phaser texture manager, giving it an additional method `generateBlobAutotileTexture`. See `examples/src/Blob.js` and especially `examples/src/Playpen.js` for an example call. The input is a set of 5 generative tiles, and the result is a set of [47 generated tiles which cover cases where the center of the tile is set](http://www.cr31.co.uk/stagecast/wang/blob.html).
 
 These are most useful when paired with autotiling, below.

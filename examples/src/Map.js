@@ -4,7 +4,7 @@ import Phaser from 'phaser';
 import BlockI from './block.png';
 import CornerI from './corner.png';
 import EdgeI from './edge.png';
-import RawBlobI from './rawblob.png';
+import RawBlobI from './raw/blob.png';
 import Map1 from './map1.csv';
 import Map2 from './map2.csv';
 import Map3 from './map3.csv';

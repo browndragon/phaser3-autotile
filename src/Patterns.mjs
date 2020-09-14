@@ -1,4 +1,4 @@
-import Ids from './Ids';
+import Ids from './Ids.mjs';
 
 /**
  * A mapping from wangid into a "tileId".
