@@ -16,7 +16,7 @@
   "bin": "./tools/blob.mjs",
   "scripts": {
     "build": "webpack",
-    "build:exampleblobs": "phaser3-autotile -i ./examples/src/raw/*.png -o ./examples/src/cooked/",
+    "build:exampleblobs": "phaser3-autotile -i ./examples/src/raw/*.png -o ./examples/src/cooked/ -t ./examples/src/tilesets/",
     "examples": "webpack-dev-server -d --context examples --config examples/webpack.config.js --open",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",

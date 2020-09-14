@@ -9,6 +9,7 @@ import fsPromises from 'fs/promises';
 import Jimp from 'jimp';
 import PATH from 'path';
 import * as _Blob from '../src/Blob.mjs';
+import TiledTileset from '../src/TiledTileset.mjs';
 
 const optionDefinitions = [{
     name: 'help',
@@ -29,8 +30,13 @@ const optionDefinitions = [{
     description: 'Output directory to write into (basenames retained).',
     typeLabel: '<./cooked/>',
 }, {
+    name: 'tileset',
+    alias: 't',
+    type: String,
+    description: 'Output directory to write tiled json tileset into.',
+    typeLabel: '<./tileset/>',
+}, {
     name: 'subtile',
-    alias: 's',
     type: Number,
     multiple: true,
     description: `Geometry of the northwest subtile (<1: ratio tile)`,
@@ -38,7 +44,6 @@ const optionDefinitions = [{
     defaultValue: [0.5],
 }, {
     name: 'tile',
-    alias: 't',
     type: Number,
     multiple: true,
     description: `Geometry of each tile; (<1: ratio image)`,
@@ -108,7 +113,14 @@ if (options._all.help) {
     for (let input of options._all.input) {
         let opt = {...options._none};
         opt.input = PATH.join(input);
-        opt.output = PATH.join(options._all.output, PATH.basename(opt.input));
+        console.assert(opt.input.endsWith('.png'));
+        opt.name = PATH.basename(input).slice(0, -4);
+        if (options._all.output) {
+            opt.output = PATH.join(options._all.output, PATH.basename(opt.input));
+            if (options._all.tileset) {
+                opt.tileset = PATH.join(options._all.tileset, opt.name + '.json');    
+            }            
+        }
         single(opt, options.patterns);
     }
 }
@@ -116,6 +128,7 @@ if (options._all.help) {
 function single(options, patterns) {
     let state = {};
     console.log(`Running `, options, patterns);
+    const dryRun = !options.output;
     Jimp.read(options.input)
         .then(input => new Promise((onFulfilled, onRejected) => {
             state.input = input;
@@ -160,12 +173,25 @@ function single(options, patterns) {
             return fsPromises.mkdir(dir, {recursive: true});
         })
         .then(() => {
-            if (!options.output) {
-                console.log('Dry run! Use -o filename.png to save.');
+            if (dryRun) {
+                console.log('Dry run! Use `-o someDir/`` to save.');
                 return;
             }
             console.log('(re)writing to:', options.output);
             return state.output.writeAsync(options.output);
+        })
+        .then(jimp => {
+            if (dryRun) {
+                return;
+            }
+            if (!options.tileset) {
+                console.log('No tileset! Use `-t tilesetDir/` to save.');
+                return;
+            }
+            return fsPromises.writeFile(options.tileset, JSON.stringify(TiledTileset(
+                options.name,
+                PATH.relative(PATH.dirname(options.tileset), options.output),
+            )));
         })
         .catch(err => {
             console.error('Error', state, err);
