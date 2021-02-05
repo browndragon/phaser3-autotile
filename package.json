@@ -2,6 +2,7 @@
   "name": "phaser3-autotile",
   "version": "0.2.5",
   "description": "Phaser 3 Autotile",
+  "type": "module",
   "main": "src/index.js",
   "watch": {
     "build:exampleblobs": {
@@ -16,7 +17,7 @@
   "bin": "./tools/blob.mjs",
   "scripts": {
     "build": "webpack",
-    "build:exampleblobs": "phaser3-autotile -i ./examples/src/raw/*.png -o ./examples/src/cooked/ -t ./examples/src/tilesets/",
+    "build:exampleblobs": "phaser3-autotile -i './examples/src/raw/*.png' -o ./examples/src/cooked/ -t ./examples/src/tilesets/",
     "examples": "webpack-dev-server -d --context examples --config examples/webpack.config.js --open",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
@@ -67,6 +68,7 @@
     "xml-loader": "^1.2.1"
   },
   "dependencies": {
+    "glob": "^7.1.6",
     "seedrandom": "^3.0.5"
   },
   "peerDependencies": {

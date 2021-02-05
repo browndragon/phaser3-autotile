@@ -6,6 +6,7 @@ import commandLineUsage from 'command-line-usage';
 import dirTree from 'directory-tree';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
+import glob from 'glob';
 import Jimp from 'jimp';
 import PATH from 'path';
 import * as _Blob from '../src/Blob.mjs';
@@ -110,18 +111,20 @@ if (options._all.help) {
     if (!Array.isArray(options._all.input) || options._all.input.length == 0) {
         throw 'Needs input file(s)';
     }
-    for (let input of options._all.input) {
-        let opt = {...options._none};
-        opt.input = PATH.join(input);
-        console.assert(opt.input.endsWith('.png'));
-        opt.name = PATH.basename(input).slice(0, -4);
-        if (options._all.output) {
-            opt.output = PATH.join(options._all.output, PATH.basename(opt.input));
-            if (options._all.tileset) {
-                opt.tileset = PATH.join(options._all.tileset, opt.name + '.json');    
-            }            
+    for (let token of options._all.input) {
+        for (let input of glob.sync(token)) {
+            let opt = {...options._none};
+            opt.input = PATH.join(input);
+            console.assert(opt.input.endsWith('.png'));
+            opt.name = PATH.basename(input).slice(0, -4);
+            if (options._all.output) {
+                opt.output = PATH.join(options._all.output, PATH.basename(input));
+                if (options._all.tileset) {
+                    opt.tileset = PATH.join(options._all.tileset, opt.name + '.json');    
+                }            
+            }
+            single(opt, options.patterns);            
         }
-        single(opt, options.patterns);
     }
 }
 
